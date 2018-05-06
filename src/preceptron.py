@@ -98,6 +98,61 @@ class Preceptron():
 
         return average / len(points)
 
+def and_prediction():
+    and_preceptron = Preceptron()
+    val0 = [0,0]
+    val1 = [0,1]
+    val2 = [1,0]
+    val3 = [1,1]
+    val_labels = [0, 0, 0, 1]
+    inputs = [val0, val1, val2, val3]
+
+    for _ in range(1000):
+        rand_num = random.randrange(0, 4)
+        input = inputs[rand_num]
+        label = val_labels[rand_num]
+        # expects target to be -1 or 1
+        if label == 0:
+            label = -1
+        else:
+            labe = 1
+        # print('randnum:',rand_num, 'input:', input, 'label:', label)
+        and_preceptron.train(input, label)
+
+    for i in inputs:
+        # return -1 or 1
+        pred = and_preceptron.feed_forward(i)
+        # print("pred", pred)
+        if pred == -1:
+            pred = 0
+        else:
+            pred = 1
+        print("{} | {} -> {}".format(i[0], i[1], pred))
+
+def showpoints(points, p):
+    for point in points:
+        prediction = p.feed_forward([point.x, point.y])
+        # correct prediction and above line (green and circle)
+        if prediction == point.label and point.label==1:
+            plt.scatter(point.x, point.y, c='g', marker="o")
+        # correct prediction and below line (red and circle)
+        elif prediction == point.label and point.label==-1:
+            plt.scatter(point.x, point.y, c='r', marker="o")
+        # wrong prediction and above line (green and cross)
+        elif prediction != point.label and point.label ==1:
+            plt.scatter(point.x, point.y, c='g', marker="x")
+        # wrong prediction and below line (red and cross)
+        elif prediction != point.label and point.label ==-1:
+            plt.scatter(point.x, point.y, c='r', marker="x")
+
+    # graph the line that the preceptron need to be trained towards
+    line_x = [i for i in range(0, 100)] # one line for loop
+    line_y = [i for i in range(0, 100)] # one line for loop
+    plt.plot(line_x, line_y)
+
+    plt.show()
+
+
 
 def main():
     p = Preceptron()
@@ -115,17 +170,23 @@ def main():
     # print("points used for training:", points)
 
     # training happens here
-    # p.train([points[0].x, points[1].y], points[1].label)
-    for point in points:
+    # p.train([points[0].x, points[1].y], points[1].label
+    for i, point in enumerate(points):
         # inputs array
         training_inputs = [point.x, point.y]
         p.train(training_inputs, point.label)
 
+        # dont train further if accuracy is perfect
+        if p.accuracy(points) == 1.0:
+            break;
+
+        # show graph every thirty points
+        if i%30 == 0:
+            showpoints(points, p)
+
     # now lets see what we get when we predict
     print("accuracy:", p.accuracy(points))
     print("output after training:", p.feed_forward(inputs))
-
-
 
     # graph a scatter plot of the data
     for point in points:
@@ -143,15 +204,12 @@ def main():
         elif prediction != point.label and point.label ==-1:
             plt.scatter(point.x, point.y, c='r', marker="x")
 
-
     # graph the line that the preceptron need to be trained towards
     line_x = [i for i in range(0, 100)] # one line for loop
     line_y = [i for i in range(0, 100)] # one line for loop
     plt.plot(line_x, line_y)
     plt.show()
 
-
-
-
 if __name__ == "__main__":
     main()
+    # and_prediction()
