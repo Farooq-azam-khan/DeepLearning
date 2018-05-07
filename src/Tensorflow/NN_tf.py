@@ -1,68 +1,73 @@
-from __future__ import absolute_import, division, print_function
+# from __future__ import absolute_import, division, print_function
 import tensorflow as tf
+from tensorflow.examples.tutorials.mnist import input_data
+mnist = input_data.read_data_sets("/tmp/data/", one_hot = True)
 
-# enable eager execution: https://www.tensorflow.org/programmers_guide/eager
-tf.enable_eager_execution()
+# 3 hidden layers each with 500 nodes
+n_nodes_hl1 = 500
+n_nodes_hl2 = 500
+n_nodes_hl3 = 500
 
-def ee():
-    tf.executing_eagerly() # -> true
-    x = [[2.0]]
-    m = tf.matmul(x, x)
-    print("m: {}".format(m))
+# num of output nodes
+n_classes = 10
+batch_size = 100
 
-    a = tf.constant([[1,2],
-                    [3,4]])
-    print(a)
+# inputs (for minist the pixles as inputs so 784 nodes)
+x = tf.placeholder('float', [None, 784])
+y = tf.placeholder('float')
 
-    b = tf.add(a, 1)
-    print("a+1:", b)
+def neural_network_model(data):
+    # first hidden layer
+    hidden_1_layer = {'weights':tf.Variable(tf.random_normal([784, n_nodes_hl1])),
+                      'biases':tf.Variable(tf.random_normal([n_nodes_hl1]))}
+    # second hidden layer
+    hidden_2_layer = {'weights':tf.Variable(tf.random_normal([n_nodes_hl1, n_nodes_hl2])),
+                      'biases':tf.Variable(tf.random_normal([n_nodes_hl2]))}
+    # third hidden layer
+    hidden_3_layer = {'weights':tf.Variable(tf.random_normal([n_nodes_hl2, n_nodes_hl3])),
+                      'biases':tf.Variable(tf.random_normal([n_nodes_hl3]))}
+    # output layer
+    output_layer = {'weights':tf.Variable(tf.random_normal([n_nodes_hl3, n_classes])),
+                    'biases':tf.Variable(tf.random_normal([n_classes])),}
 
-    print("a*b:", a*b)
+    # feed forward
+    # values of layer 1
+    l1 = tf.add(tf.matmul(data,hidden_1_layer['weights']), hidden_1_layer['biases'])
+    l1 = tf.nn.relu(l1)
+    # values of layer 2
+    l2 = tf.add(tf.matmul(l1,hidden_2_layer['weights']), hidden_2_layer['biases'])
+    l2 = tf.nn.relu(l2)
+    # values of layer 3
+    l3 = tf.add(tf.matmul(l2,hidden_3_layer['weights']), hidden_3_layer['biases'])
+    l3 = tf.nn.relu(l3)
 
-    # use with numpy
-    import numpy as np
-    print("tensor objects can be used with numpy")
-    c = np.multiply(a, b)
-    print("c=a*b", c)
+    # output layer
+    output = tf.matmul(l3,output_layer['weights']) + output_layer['biases']
 
-    # obtain numpy values from a tensor
-    print("obtain numpy values from a tensor")
-    print("a:", a.numpy())
+    return output
 
-def fizzbuzz():
-    print(tf.executing_eagerly())
-    # tf.enable_eager_execution()
-    max_num = 20
-    zero = tf.constant(0)
-    counter = tf.constant(0)
-    # print(counter)
-    for num in range(max_num):
-        num = tf.constant(num)
-        div_3 = num%3
-        div_5 = num%5
-        # print(div_3==0)
-        if div_3 == zero and div_5 == zero:
-            print("FizzBuzz")
-        elif div_3 == zero:
-            print("Fizz")
-        elif div_5 == zero:
-            print("Buzz")
+def train_neural_network(x):
+    # training
+    prediction = neural_network_model(x)
+    cost = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=y) )
+    optimizer = tf.train.AdamOptimizer().minimize(cost)
 
-# building a layer with tf.keras.layers
-class MySimpleLayer(tf.keras.layers.Layer):
-    def __init__(self, output_units):
-        self.output_units = output_units
-    # build method gets called first time the layer is used
-    # creates variables on build() allows shapes to depend on input shape
-    # removes need for user to specify shpae/ but still possible to build shape in __inti__()
-    def build(self, input):
-        self.kernel = self.add_variable("kernel", [input.shape[-1], self.output_units])
+    hm_epochs = 10
+    with tf.Session() as sess:
+        sess.run(tf.global_variables_initializer())
 
-    def call(self, input):
-        # override call() instead of __call__ we perform bookeeping.
-        return tf.matmul(input, self.kernel)
+        for epoch in range(hm_epochs):
+            epoch_loss = 0
+            for _ in range(int(mnist.train.num_examples/batch_size)):
+                epoch_x, epoch_y = mnist.train.next_batch(batch_size)
+                _, c = sess.run([optimizer, cost], feed_dict={x: epoch_x, y: epoch_y})
+                epoch_loss += c
 
-def main():
-    pass
+            print('Epoch', epoch, 'completed out of',hm_epochs,'loss:',epoch_loss)
 
-if __name__ == "__main__":
+        correct = tf.equal(tf.argmax(prediction, 1), tf.argmax(y, 1))
+
+        accuracy = tf.reduce_mean(tf.cast(correct, 'float'))
+        print('Accuracy:',accuracy.eval({x:mnist.test.images, y:mnist.test.labels}))
+
+train_neural_network(x)

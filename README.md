@@ -15,7 +15,7 @@ Here is the tutorial for Deep Learning.
   - with the `neural_network.py` file as you can see the `xor` problem, although simple to us cannot be solved by the PLA but it is very easy for the NN (after 1000 iterations of training).
 ## 4. Tensorflow in python
   - in the director `Tensorflow` we have the following files: 'NN_tf.py', `iris_tf.py`
-  - the `NN_tf.py` file contains an implementation of a Deep Neural Network with tensorflow
+  - the `NN_tf.py` file contains an implementation of a Deep Neural Network with tensorflow. It trains a model on the mnist dataset which has 784 inputs, 3 hidden layers, and 10 outputs.
 ## 5. CNN and Keras
 
 For you to use this repository you will need to install the requirements.
