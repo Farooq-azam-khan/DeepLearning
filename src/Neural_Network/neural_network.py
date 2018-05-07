@@ -5,8 +5,8 @@ import random
 
 def sigmoid(x):
     return 1 / (1 + math.exp(-x))
-def dsigmoid(x):
-    return sigmoid(x) * (1 - sigmoid(x))
+def dsigmoid(y):
+    return y * (1 - y) #sigmoid(x) * (1 - sigmoid(x))
 
 class NeuralNetwork():
     def __init__(self, input_nodes, hidden_nodes, output_nodes):
@@ -31,6 +31,10 @@ class NeuralNetwork():
         self.bias_h.randomize()
         self.bias_o.randomize()
 
+    ''' sets the learning rate '''
+    def setLR(lr):
+        self.lr = lr
+
     ''' predicts output '''
     def feed_forward(self, input_array):
         # get the values for the hidden nodes
@@ -39,12 +43,12 @@ class NeuralNetwork():
         hidden.add(self.bias_h)
 
         # activation function on the hidden nodes
-        hidden.activationFunction("sigmoid")
+        hidden.map(sigmoid)
 
         # get the values for the output
         output = Matrix.matMultiply(self.weights_ho, hidden) # multiply ho wegths with hidden nodes
         output.add(self.bias_o) # add bias
-        output.activationFunction("sigmoid") # sigmoid activation
+        output.map(sigmoid) # sigmoid activation
 
         # return output as array
         return output.toArray()
@@ -57,18 +61,18 @@ class NeuralNetwork():
         # get values for hidden nodes
         hidden = Matrix.matMultiply(self.weights_ih, inputs)
         hidden.add(self.bias_h)
-        hidden.activationFunction("sigmoid")
+        hidden.map(sigmoid)
         # get values for output nodes
         outputs = Matrix.matMultiply(self.weights_ho, hidden)
         outputs.add(self.bias_o)
-        outputs.activationFunction("sigmoid")
+        outputs.map(sigmoid)
 
 
         # calculate the error, ERROR = TARGETS - OUTPUTS
         output_errors = Matrix.subtract(targets, outputs)
 
         # get derivative of output_errors: gradien = ouptuts * (1 - outputs)
-        gradients = Matrix.map(outputs, "dsigmoid")
+        gradients = Matrix.static_map(outputs, dsigmoid)
 
         gradients.multiply(output_errors)
         gradients.multiply(self.lr)
@@ -88,7 +92,7 @@ class NeuralNetwork():
         hidden_errors = Matrix.matMultiply(who_t, output_errors)
 
         # hidden gradient
-        hidden_gradient = Matrix.map(hidden, "dsigma")
+        hidden_gradient = Matrix.static_map(hidden, dsigmoid)
         hidden_gradient.multiply(hidden_errors)
         hidden_gradient.multiply(self.lr)
 
@@ -116,10 +120,11 @@ def main():
     inputs = [val0, val1, val2, val3]
     targets = [[0], [1], [1], [0]]
 
-    for _ in range(1000):
+    for _ in range(10000):
         indx = random.randrange(0,4)
         input = inputs[indx]
         target = targets[indx]
+        # print(input, target)
         nn.train(input, target)
 
     print("xor problem")

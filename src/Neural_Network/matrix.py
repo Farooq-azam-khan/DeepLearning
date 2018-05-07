@@ -1,12 +1,6 @@
 import numpy as np
 import random
 import math
-def sigmoid(x):
-    return 1 / (1 + math.exp(-x))
-
-# by the time we use this the activation function has bee applied
-def dsigmoid(y):
-    return y * (1 - y) #sigmoid(x) * (1 - sigmoid(x))
 
 class Matrix():
     def __init__(self, rows, cols):
@@ -14,9 +8,9 @@ class Matrix():
         self.cols = cols
 
         self.data = []
-        for i in range(0, self.rows):
+        for i in range(self.rows):
             self.data.append([])
-            for j in range(0, self.cols):
+            for j in range(self.cols):
                 self.data[i].append(0)
 
     ''' returns a matrix object with its values '''
@@ -60,6 +54,7 @@ class Matrix():
         for i in range(0,self.rows):
             for j in range(0,self.cols):
                 self.data[i][j] = random.uniform(-1, 1)
+        return self
 
     ''' adds matrix to this matrix elementwise or scalar wise '''
     def add(self, n):
@@ -72,10 +67,12 @@ class Matrix():
                 for i in range(self.rows):
                     for j in range(self.cols):
                         self.data[i][j] += n.data[i][j]
+                return self
         else:
             for i in range(self.rows):
                 for j in range(self.cols):
                     self.data[i][j] += n
+            return self
 
 
     ''' transposes a matrix '''
@@ -103,15 +100,22 @@ class Matrix():
                     result.data[i][j] = sum
             return result
 
+    ''' multiplies activationfunct(x) * matrix '''
+    def map(self, func):
+        for i in range(self.rows):
+            for j in range(self.cols):
+                val = self.data[i][j]
+                self.data[i][j] = func(val)
+        return self
+
     ''' map: calculate f(index_i_j) '''
     @staticmethod
-    def map(matrix, func):
+    def static_map(matrix, func):
         result = Matrix(matrix.rows, matrix.cols)
         for i in range(matrix.rows):
             for j in range(matrix.cols):
-                if func == "dsigmoid":
-                    val = matrix.data[i][j]
-                    matrix.data[i][j] = dsigmoid(val)
+                val = matrix.data[i][j]
+                result.data[i][j] = func(val)
         return result
 
 
@@ -126,11 +130,13 @@ class Matrix():
                 for i in range(self.rows):
                     for j in range(self.cols):
                         self.data[i][j] *= n.data[i][j]
+                return self
         else:
             # scalar product
             for i in range(self.rows):
                 for j in range(self.cols):
                     self.data[i][j] *= n
+            return self
 
     ''' to string method '''
     def __repr__(self):
@@ -145,13 +151,7 @@ class Matrix():
             result += "]\n"
         return result
 
-    ''' multiplies activationfunct(x) * matrix '''
-    def activationFunction(self, func):
-        if func == "sigmoid":
-            for i in range(self.rows):
-                for j in range(self.cols):
-                    val = self.data[i][j]
-                    self.data[i][j] = sigmoid(val)
+
 
 
 def main():
