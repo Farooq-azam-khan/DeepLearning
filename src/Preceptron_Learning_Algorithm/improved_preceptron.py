@@ -1,5 +1,7 @@
 import random # used to generate random weights
+import math
 
+# TODO: need to be fixed
 # activation function
 def sign(num):
     if (num >= 0):
@@ -18,6 +20,7 @@ class Improved_Preceptron():
         self.num_outputs = num_outputs
         #learning rate
         self.lr = 0.1
+        # activation function to use for training
 
         # preceptron keeps track of its own weights
         self.input_weights = []
@@ -31,20 +34,7 @@ class Improved_Preceptron():
         self.randomize_input_bias()
         self.randomize_output_bias()
 
-    def randomize_input_weights(self):
-        for weight_index in range(self.num_weights):
-            # initalize the weights to be random number between -1 and 1
-            self.input_weights.append(random.uniform(-1,1))
-    def randomize_output_weigths(self):
-        for weight_index in range(self.num_outputs):
-            # initalize the weights to be random number between -1 and 1
-            self.output_weights.append(random.uniform(-1,1))
-    def randomize_input_bias(self):
-        for _ in range(1): # only one bias for the inputs
-            self.input_bias.append(random.uniform(-1,1))
-    def randomize_output_bias(self):
-        for _ in range(self.num_outputs):
-            self.output_bias.append(random.uniform(-1,1))
+
 
 
     '''
@@ -52,23 +42,25 @@ class Improved_Preceptron():
         return: expected output
     '''
     def feed_forward(self, inputs):
+        preceptron_summation = 0
 
-        sum = 0
         # loop through the weights
         for i, weight in enumerate(self.input_weights):
             # multiply the weights by the inputs at that index
             result = weight * inputs[i]
             # add it to total sum
-            sum = sum + result
+            preceptron_summation = preceptron_summation + result
         # add the bias
-        sum += self.input_bias[0]
+        preceptron_summation += self.input_bias[0] # array of 1 value
         # pass the sum through the activation function
-        preceptron_summation = sign(sum)
+        preceptron_summation = sign(preceptron_summation)
 
         # more than one output
         output = []
         for indx, o_weight in enumerate(self.output_weights):
+            # multiply the weights and add the bias (bias is array of n elements)
             get_output = preceptron_summation*o_weight+self.output_bias[indx]
+            # pass through activation function
             output.append(sign(get_output))
 
         return output
@@ -105,8 +97,8 @@ class Improved_Preceptron():
 
         # adjust the output weights here
         for indx, o_weight in enumerate(self.output_weights):
-            # TODO: double check this later
-            delta_o_weight = errors[indx] * preceptron_summation * self.lr
+            # TODO: double check this later, done
+            delta_o_weight = errors[indx] * self.lr * preceptron_summation
             self.output_weights[indx] = o_weight + delta_o_weight
 
         # adjust the input weights here
@@ -114,14 +106,13 @@ class Improved_Preceptron():
         for error in errors:
             total_ers+=error
         for indx, i_weight in enumerate(self.input_weights):
-            delta_i_weight = total_ers * i_weight * self.lr
+            delta_i_weight = self.lr * total_ers * i_weight
             self.input_weights[indx] = weight + delta_i_weight
 
     '''
         runs train function over and over agian
     '''
     def fit(self, inputs_train_array, targets_train_array, inputs_test_array, targets_test_array):
-        # print("accuracy:", self.actual_accuracy(inputs_test_array, targets_test_array))
         EPOCHS = 10
         BATCHSIZE = 100
         for epoch in range(EPOCHS):
@@ -131,7 +122,8 @@ class Improved_Preceptron():
                 target = targets_train_array[random_index]
                 self.train(input, target)
             acc = self.actual_accuracy(inputs_test_array, targets_test_array)
-            print("Epoch: {} out of {} accuarcy: {}".format(epoch+1, EPOCHS, acc))
+            print("Epoch: {} out of {} accuarcy: {:.2f}".format(epoch+1, EPOCHS, acc))
+
 
             if acc == 1.0:
                 break
@@ -142,8 +134,7 @@ class Improved_Preceptron():
         for x, y in zip(inputs_test_array, targets_test_array):
             # get the inputs
             prediction = self.feed_forward(x)
-            print("pred: ---->", prediction, end="")
-            print("y: ----->", y)
+            # print("pred:", prediction, "y:", y)
             if prediction == y:
                 average+=1
 
@@ -163,7 +154,6 @@ class Improved_Preceptron():
         combined = list(zip(X, y))
         random.shuffle(combined)
         X[:], y[:] = zip(*combined)
-        # print(y)
 
 
         splitting_index_X = int(len(X)*train_split)
@@ -174,6 +164,22 @@ class Improved_Preceptron():
         X_test  = X[splitting_index_X:]
         y_test  = y[splitting_index_y:]
         return X_train, y_train, X_test, y_test
+
+    def randomize_input_weights(self):
+        for weight_index in range(self.num_weights):
+            # initalize the weights to be random number between -1 and 1
+            self.input_weights.append(random.uniform(-1,1))
+    def randomize_output_weigths(self):
+        for weight_index in range(self.num_outputs):
+            # initalize the weights to be random number between -1 and 1
+            self.output_weights.append(random.uniform(-1,1))
+    def randomize_input_bias(self):
+        for _ in range(1): # only one bias for the inputs
+            self.input_bias.append(random.uniform(-1,1))
+    def randomize_output_bias(self):
+        for _ in range(self.num_outputs):
+            self.output_bias.append(random.uniform(-1,1))
+
     '''
         param: array of points objects
         return: accuracy between 0 and 1
@@ -224,8 +230,10 @@ class Improved_Preceptron():
             z = m1*x + m2*y + b
             return z
 
+
 def main():
     pass
+
 
 if __name__ =="__main__":
     main()

@@ -5,18 +5,12 @@ import random
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
-from matplotlib.ticker import LinearLocator, FormatStrFormatter
+# from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import numpy as np
 
-# function for the fomula of an n-dimentional line(we will work w/ 3d for graphing purposes)
-# see for practice: http://tutorial.math.lamar.edu/Classes/CalcIII/EqnsOfLines.aspx
-# r = r_0 + tv
-#      x, y, z
-# r_0 = [1, 1, 1]
-# v   = [1, 1, 1]
-# r   = [r_0[0]+t*v[0], r_0[1]+t*v[1], r_0[2]+t*v[2]]
 
-def line3d(x, y):
+
+def plane(x, y):
     # z = m1x + m2y + b
     return 2*x + 2*y + 1
 
@@ -35,7 +29,7 @@ class Point():
         # the label is the known answer. We use this to train preceptron.
         self.label = 0
 
-        line_z = line3d(self.x, self.y)
+        line_z = plane(self.x, self.y)
         if (self.z > line_z):
             self.label = 1
         else:
@@ -79,7 +73,7 @@ def main():
             model_3d.train(training_inputs, rand_train_point.label)
 
         accuracy = model_3d.accuracy(test_points)
-        print("Epoch:", epoch+1, "out of", EPOCHS, "accuracy:", accuracy)
+        print("Epoch: {:2d} out of {:2d} accuracy: {:.2f}".format(epoch+1, EPOCHS, accuracy))
 
         if accuracy == 1.0:
             break
@@ -125,15 +119,15 @@ def graph_3d_points(points, model_3d):
 
 
     # draw the points
-    ax.scatter(correct_above_x, correct_above_y, c='g', marker="o", label="correct prediction/above line")
-    ax.scatter(correct_below_x, correct_below_y, c='r', marker="o", label="correct prediction/below line")
-    ax.scatter(wrong_above_x, wrong_above_y, c='g', marker="x", label="wrong prediction/above line")
-    ax.scatter(wrong_below_x, wrong_below_y, c='r', marker="x", label="wrong prediction/below line")
+    ax.scatter(correct_above_x, correct_above_y, c='g', marker="o", label="correct prediction/above plane")
+    ax.scatter(correct_below_x, correct_below_y, c='r', marker="o", label="correct prediction/below plane")
+    ax.scatter(wrong_above_x, wrong_above_y, c='g', marker="x", label="wrong prediction/above plane")
+    ax.scatter(wrong_below_x, wrong_below_y, c='r', marker="x", label="wrong prediction/below plane")
 
     px = [pt.x for pt in points]
     py = [pt.y for pt in points]
     px, py = np.meshgrid(np.array(px), np.array(py))
-    pz = np.array([line3d(ptx, pty) for ptx, pty in zip(px, py)])
+    pz = np.array([plane(ptx, pty) for ptx, pty in zip(px, py)])
     surf = ax.plot_wireframe(px, py, pz, rstride=2, cstride=2, alpha=0.2, color="k", label="Actual Plane")
 
     # draw the line that the preceptron think it it
@@ -141,7 +135,7 @@ def graph_3d_points(points, model_3d):
     model3d_plane_y = np.array([pt.y for pt in points])
     model3d_plane_x, model3d_plane_y = np.meshgrid(model3d_plane_x, model3d_plane_y)
     model3d_plane_z = np.array([model_3d.guess_z(x, y) for x, y in zip(model3d_plane_x, model3d_plane_y)])
-    surf2 = ax.plot_wireframe(model3d_plane_x, model3d_plane_y, model3d_plane_z, rstride=2, cstride=2, alpha=0.2, color="y", label="PLA Line")
+    surf2 = ax.plot_wireframe(model3d_plane_x, model3d_plane_y, model3d_plane_z, rstride=2, cstride=2, alpha=0.2, color="y", label="PLA Plane")
     # plt.plot(p_line_x, p_line_y, color="y", label="PLA Line")
 
     ax.set_xlabel('X Label')

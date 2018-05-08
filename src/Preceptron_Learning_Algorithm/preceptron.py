@@ -1,5 +1,4 @@
 import random # used to generate random weights
-
 # activation function
 def sign(num):
     if (num >= 0):
@@ -62,12 +61,13 @@ class Preceptron():
         # get the error = known answer - guess
         error = target - guess_inputs
 
-        # adjust the weights here
+        # adjust the weights here (the bias is inclded as one of the weights)
         for indx, weight in enumerate(self.weights):
             # change the weights based on the previous weight, the LR,
             # the error and its corresponding input
             delta_weight = error * inputs[indx] * self.lr
             self.weights[indx] = weight + delta_weight
+
 
     '''
         runs train function over and over agian
