@@ -11,24 +11,41 @@ def sign(num):
     class: Improved_Preceptron
     usage: same as preceptron class but here there are n outputs
  '''
-class Preceptron():
+class Improved_Preceptron():
     # constructor
     def __init__(self, num_inputs, num_outputs):
-        # weights: the number of weights = number of inputs
         self.num_weights = num_inputs
         self.num_outputs = num_outputs
-        # preceptron keeps track of its own weights
-        self.weights = []
-        for weight_index in range(self.num_weights):
-            # initalize the weights to be random number between -1 and 1
-            self.weights.append(random.uniform(-1,1))
-
-        # add a random weight for the bias
-        self.weights.append(random.uniform(-1,1))
-        self.num_weights += 1 # this is becuase we added the bias
-
         #learning rate
         self.lr = 0.1
+
+        # preceptron keeps track of its own weights
+        self.input_weights = []
+        self.output_weights = []
+
+        self.input_bias = []
+        self.output_bias = []
+
+        self.randomize_input_weights()
+        self.randomize_output_weigths()
+        self.randomize_input_bias()
+        self.randomize_output_bias()
+
+    def randomize_input_weights(self):
+        for weight_index in range(self.num_weights):
+            # initalize the weights to be random number between -1 and 1
+            self.input_weights.append(random.uniform(-1,1))
+    def randomize_output_weigths(self):
+        for weight_index in range(self.num_outputs):
+            # initalize the weights to be random number between -1 and 1
+            self.output_weights.append(random.uniform(-1,1))
+    def randomize_input_bias(self):
+        for _ in range(1): # only one bias for the inputs
+            self.input_bias.append(random.uniform(-1,1))
+    def randomize_output_bias(self):
+        for _ in range(self.num_outputs):
+            self.output_bias.append(random.uniform(-1,1))
+
 
     '''
         param: inputs array
@@ -36,39 +53,69 @@ class Preceptron():
     '''
     def feed_forward(self, inputs):
 
-        # add the bias as part of the input
-        bias = 1
-        inputs.append(bias)
-
         sum = 0
         # loop through the weights
-        for i, weight in enumerate(self.weights):
+        for i, weight in enumerate(self.input_weights):
             # multiply the weights by the inputs at that index
             result = weight * inputs[i]
             # add it to total sum
             sum = sum + result
+        # add the bias
+        sum += self.input_bias[0]
         # pass the sum through the activation function
-        output = sign(sum)
-        # return the output
+        preceptron_summation = sign(sum)
+
+        # more than one output
+        output = []
+        for indx, o_weight in enumerate(self.output_weights):
+            get_output = preceptron_summation*o_weight+self.output_bias[indx]
+            output.append(sign(get_output))
+
         return output
 
     '''
     param input: data you want to use to train preceptron
     param target: the known output for adjusting the weights ie the label
     '''
-    def train(self, inputs, target):
+    def train(self, inputs, targets):
         # get a guess based on the input (+1 or -1)
-        guess_inputs = self.feed_forward(inputs)
+        sum = 0
+        preceptron_summation = 0
+        # loop through the weights
+        for i, weight in enumerate(self.input_weights):
+            # multiply the weights by the inputs at that index
+            result = weight * inputs[i]
+            # add it to total sum
+            sum = sum + result
+        # add the bias
+        sum += self.input_bias[0]
+        # pass the sum through the activation function
+        preceptron_summation = sign(sum)
+
+        guess_inputs = []# now an array
+        for indx, o_weight in enumerate(self.output_weights):
+            get_output = preceptron_summation*o_weight+self.output_bias[indx]
+            guess_inputs.append(sign(get_output))
+
 
         # get the error = known answer - guess
-        error = target - guess_inputs
+        errors = [] #target - guess_inputs
+        for target, guess_input in zip(targets, guess_inputs):
+            errors.append(target - guess_input)
 
-        # adjust the weights here
-        for indx, weight in enumerate(self.weights):
-            # change the weights based on the previous weight, the LR,
-            # the error and its corresponding input
-            delta_weight = error * inputs[indx] * self.lr
-            self.weights[indx] = weight + delta_weight
+        # adjust the output weights here
+        for indx, o_weight in enumerate(self.output_weights):
+            # TODO: double check this later
+            delta_o_weight = errors[indx] * preceptron_summation * self.lr
+            self.output_weights[indx] = o_weight + delta_o_weight
+
+        # adjust the input weights here
+        total_ers = 0
+        for error in errors:
+            total_ers+=error
+        for indx, i_weight in enumerate(self.input_weights):
+            delta_i_weight = total_ers * i_weight * self.lr
+            self.input_weights[indx] = weight + delta_i_weight
 
     '''
         runs train function over and over agian
@@ -95,6 +142,8 @@ class Preceptron():
         for x, y in zip(inputs_test_array, targets_test_array):
             # get the inputs
             prediction = self.feed_forward(x)
+            print("pred: ---->", prediction, end="")
+            print("y: ----->", y)
             if prediction == y:
                 average+=1
 
@@ -174,3 +223,9 @@ class Preceptron():
             b = -(w3/w2) # *1
             z = m1*x + m2*y + b
             return z
+
+def main():
+    pass
+
+if __name__ =="__main__":
+    main()
