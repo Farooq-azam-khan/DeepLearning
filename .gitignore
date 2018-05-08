@@ -3,8 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-visualize_terminal.py
-
+.\src\Preceptron_Learning_Algorithm\visualize_terminal.py
 # C extensions
 *.so
 
