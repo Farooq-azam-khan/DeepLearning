@@ -8,14 +8,15 @@ def sign(num):
         return -1
 
 '''
-    class: Preceptron
-    usage: create a linearly separable line based on weights and biases
+    class: Improved_Preceptron
+    usage: same as preceptron class but here there are n outputs
  '''
 class Preceptron():
     # constructor
-    def __init__(self, num_weights):
+    def __init__(self, num_inputs, num_outputs):
         # weights: the number of weights = number of inputs
-        self.num_weights = num_weights
+        self.num_weights = num_inputs
+        self.num_outputs = num_outputs
         # preceptron keeps track of its own weights
         self.weights = []
         for weight_index in range(self.num_weights):

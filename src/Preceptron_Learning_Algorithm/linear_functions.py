@@ -29,6 +29,9 @@ class Point():
         else:
             self.label = -1
 
+    def get_points(self):
+        return [self.x, self.y]
+
     # like the toString method in java
     def __repr__(self):
         return "[x: {:.2f}, y: {:.2f}, label: {}]".format(self.x, self.y, self.label)
@@ -92,7 +95,7 @@ def graph_model(points, p_model):
     wrong_below_y = []
     # classify points into four groups
     for point in points:
-        prediction = p_model.feed_forward([point.x, point.y])
+        prediction = p_model.feed_forward(point.get_points())
         # correct prediction and above line (green and circle)
         if prediction == point.label and point.label==1:
             correct_above_x.append(point.x)
