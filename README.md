@@ -1,5 +1,14 @@
 # DeepLearning Library
-Here is the tutorial for Deep Learning.
+Here is the tutorial for Deep Learning. This repository requires python 3
+Follow these instruction so that you can use this repository:
+1. Download the zip file and extract
+2. Launch a python virtual environment by typing `virtualenv [env_name]`.
+  - If you do not have virtuelenv use: `pip3 install virtualenv`.
+3. One it is setup activate the virtual environment by typing: `Scripts\activate`
+  - this way the python moduels installed on your computer will not be affected
+4. Install the required python packages from requirements.txt. This following code will install all of the requirements: `pip3 install -r requirements.txt`.
+5. Now you can run any python file in this repository, just type: `python [file_name]` in that directory.
+
 ## 1. Preceptron Learning Algorithm
   - look at the following files: `preceptron.py`, `linear_function.py`, `boolean_function.py`.
   - the `Preceptron()` class contains the preceptron learning algorithm
