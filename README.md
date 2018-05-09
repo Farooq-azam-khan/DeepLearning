@@ -1,5 +1,7 @@
 # DeepLearning Library
-Here is the tutorial for Deep Learning. This repository requires python 3
+Here is the tutorial for Deep Learning. This repository requires python 3.
+
+## 0. Setup
 Follow these instruction so that you can use this repository:
 1. Launch a python virtual environment by typing `virtualenv [env_name]`.
     - If you do not have virtualenv use: `pip3 install virtualenv`.
