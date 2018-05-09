@@ -1,11 +1,11 @@
 # DeepLearning Library
 Here is the tutorial for Deep Learning. This repository requires python 3
 Follow these instruction so that you can use this repository:
-1. Download the zip file and extract
-2. Launch a python virtual environment by typing `virtualenv [env_name]`.
-  - If you do not have virtuelenv use: `pip3 install virtualenv`.
-3. One it is setup activate the virtual environment by typing: `Scripts\activate`
-  - this way the python moduels installed on your computer will not be affected
+1. Launch a python virtual environment by typing `virtualenv [env_name]`.
+    - If you do not have virtuelenv use: `pip3 install virtualenv`.
+2. Once it is setup activate the virtual environment by typing: `Scripts\activate`
+    - This way the python moduels installed on your computer will not be affected.
+3. Download the zip file and extract the `src\` file and the `requirements.txt` file in to the virtuelenv directory.
 4. Install the required python packages from requirements.txt. This following code will install all of the requirements: `pip3 install -r requirements.txt`.
 5. Now you can run any python file in this repository, just type: `python [file_name]` in that directory.
 
