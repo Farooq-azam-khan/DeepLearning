@@ -5,7 +5,7 @@ import random
 
 from preceptron import Preceptron
 from improved_preceptron import Improved_Preceptron
-
+# un
 def get_iris_data(p_model):
     iris = load_iris()
     X = iris.data.tolist()

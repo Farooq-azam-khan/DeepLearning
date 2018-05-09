@@ -3,7 +3,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-.\src\Preceptron_Learning_Algorithm\visualize_terminal.py
+src\Preceptron_Learning_Algorithm\iris_pla.py
+
 # C extensions
 *.so
 
