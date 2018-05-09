@@ -6,7 +6,7 @@ Follow these instruction so that you can use this repository:
 1. Launch a python virtual environment by typing `virtualenv [env_name]`.
     - If you do not have virtualenv use: `pip3 install virtualenv`.
 2. Once it is setup activate the virtual environment by typing: `Scripts\activate`
-    - This way the python moduels installed on your computer will not affect your moduels in this virtual environmnet nor will they be affected.
+    - This way the python modules installed on your computer will not affect your moduels in this virtual environment nor will they be affected.
 3. Download the zip file and extract the `src\` file and the `requirements.txt` file in to the virtuelenv directory.
 4. Install the required python packages from requirements.txt. This following code will install all of the requirements: `pip3 install -r requirements.txt`.
     - To check that you have done the above steps correctly just type `pip freeze` to see all the packages that are installed on your virtual environment.
@@ -32,7 +32,7 @@ Follow these instruction so that you can use this repository:
 
 ```python
 letters = ['a', 'b', "c"]
-# letter will equal to 'a', then 'b', adn then 'c'
+# letter will equal to 'a', then 'b', and then 'c'
 for letter in letters:
   print(letter)
 # enumerate() function will allow you to access the index of a function
