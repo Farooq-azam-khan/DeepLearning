@@ -10,8 +10,27 @@
   - this means minimize: `[H(x) - y]^2`, where `H(x)` is algorithm's prediction and `y` is ideal line.
   - can use __gradient descent__ in higher dimensions (very efficient) or w/ __design matrices__ if there are not much features
 
-  | __design matrices__ |   __gradient descent__    |
+  | __Design Matrices__ |   __Gradient Descent__    |
   |:--------------------|--------------------------:|
-  | no parameters       |   have to choose LR       |
-  | Matrix inversion!   |   No expensive operations |
-  | Lower dimensions    |   higher dimensions       |
+  | No parameters       |   Have to Choose LR       |
+  | Matrix inversion!   |   No expensive Operations |
+  | Lower dimensions    |   Higher Dimensions       |
+
+## Gradient Descent
+- graph `b0` and `b1`. Need to find minimum value of plane formed with graph. Need partial derivatives.
+- The minimum value of `(b0, b1)` is the optimal one and thus will be values for our linear equation.
+
+# Logistic Regression
+- http://www.saedsayad.com/logistic_regression.htm
+- Predicts the probability of an outcome that can only have two value (__dichotomy__).
+- use __sigmoid__ function `p(x) = 1 / [1 + e^(-y)]` for `y = b0 + b1*x`
+- gets a value between `0` and `1`.
+- if we get non-linear curve, we can make it linear with __Logit Transformation__
+  - `log(p / (1-p)) = b0 + b1x`
+- how to fit the parameters?
+  - __maximum likelihood method__
+  - __gradient descent method__
+
+## Multivariate Logistic Regression
+- `p(x) = 1 / (1+e^[-(b0 + b1x1 + b2x2+...+bnxn)])`
+- __sigmoid__ function is between 0 and 1 thus it is good for predicting probabilities
