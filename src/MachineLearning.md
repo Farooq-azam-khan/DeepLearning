@@ -4,7 +4,7 @@
 
 # Supervised
 - Give algorithm the right answer so it can develop
-- Example algs: __Regression, Naïve Based, SVM, Neural Nets__
+- Example algorithms: __Regression, Naïve Based, SVM, Neural Nets__
 - use a __dataset__
   - split it into __training__ and __testing__
   - __training set__ will train algorithm
@@ -13,4 +13,4 @@
 # Unsupervised
 - Do not have a dataset with the right answers -> data w/out labels
 - algorithm must find a pattern if it exists, called __clusters__
-- Example algs: __K-means clustering, __hierarchical clustering, PCA__
+- Example algorithms: __K-means clustering, hierarchical clustering, PCA__
