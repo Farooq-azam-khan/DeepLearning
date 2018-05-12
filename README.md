@@ -1,5 +1,5 @@
 # Deep Learning Library
-Here is the tutorial for Deep Learning. This repository requires python 3.
+Here is the tutorial for Deep Learning. This repository requires `python 3 64-bit`.
 
 ## 0. Setup
 Follow these instruction so that you can use this repository:
@@ -36,7 +36,7 @@ Follow these instruction so that you can use this repository:
   - to be implemented
 ## 8. Sklearn
   - to be implemented
-  
+
 ## 9. Neural Network Algorithm
   - In the directory `Neural_Network` you will find 2 files: `matrix.py` and `neural_network.py`.
   - the `matrix.py` contains matrix operations (which you can look at if you are interested but it is not necessary for an intuitive understanding).

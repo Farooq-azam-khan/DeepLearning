@@ -3,7 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-src\Preceptron_Learning_Algorithm\iris_pla.py
+Include/
+Scripts/
+pip-selfcheck.json
+tcl/
 
 # C extensions
 *.so
