@@ -39,4 +39,4 @@
 - `X_new = (x - min(x)) / (max(x) - min(x))`
 
 ### Z-transformation
-- 'X_new = (x - mean(x)) / (standardDieviation(x))'
+- `X_new = (x - mean(x)) / (standardDieviation(x))`
