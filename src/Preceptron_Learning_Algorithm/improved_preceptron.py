@@ -1,13 +1,20 @@
 import random # used to generate random weights
 import math
 
-# TODO: need to be fixed
+# TODO: debug overflow and algorithm
 # activation function
 def sign(num):
     if (num >= 0):
         return 1
     else:
         return -1
+
+def sigmoid(x):
+    x = round(x, 2)
+    return 1 / (1 + math.exp(-x))
+
+def dsigmoid(y):
+    return y*(1-y)
 
 '''
     class: Improved_Preceptron
@@ -20,7 +27,6 @@ class Improved_Preceptron():
         self.num_outputs = num_outputs
         #learning rate
         self.lr = 0.1
-        # activation function to use for training
 
         # preceptron keeps track of its own weights
         self.input_weights = []
@@ -41,9 +47,11 @@ class Improved_Preceptron():
         param: inputs array
         return: expected output
     '''
+    def predict(self, inputs):
+        return self.feed_forward(inputs)
+
     def feed_forward(self, inputs):
         preceptron_summation = 0
-
         # loop through the weights
         for i, weight in enumerate(self.input_weights):
             # multiply the weights by the inputs at that index
@@ -53,15 +61,17 @@ class Improved_Preceptron():
         # add the bias
         preceptron_summation += self.input_bias[0] # array of 1 value
         # pass the sum through the activation function
-        preceptron_summation = sign(preceptron_summation)
+        preceptron_summation = round(preceptron_summation, 30)
+        preceptron_summation = sigmoid(preceptron_summation)
 
         # more than one output
         output = []
         for indx, o_weight in enumerate(self.output_weights):
             # multiply the weights and add the bias (bias is array of n elements)
-            get_output = preceptron_summation*o_weight+self.output_bias[indx]
+            get_output = (preceptron_summation*o_weight)+self.output_bias[indx]
             # pass through activation function
-            output.append(sign(get_output))
+            get_output = round(get_output, 30)
+            output.append(sigmoid(get_output))
 
         return output
 
@@ -70,44 +80,56 @@ class Improved_Preceptron():
     param target: the known output for adjusting the weights ie the label
     '''
     def train(self, inputs, targets):
-        # get a guess based on the input (+1 or -1)
-        sum = 0
         preceptron_summation = 0
         # loop through the weights
-        for i, weight in enumerate(self.input_weights):
-            # multiply the weights by the inputs at that index
-            result = weight * inputs[i]
-            # add it to total sum
-            sum = sum + result
+        for indx, weight in enumerate(self.input_weights):
+            preceptron_summation += weight * inputs[indx]
+
         # add the bias
-        sum += self.input_bias[0]
+        preceptron_summation += self.input_bias[0]
         # pass the sum through the activation function
-        preceptron_summation = sign(sum)
+        preceptron_summation = round(preceptron_summation, 30)
+        preceptron_summation = sigmoid(preceptron_summation)
 
-        guess_inputs = []# now an array
+        guesses = []
         for indx, o_weight in enumerate(self.output_weights):
-            get_output = preceptron_summation*o_weight+self.output_bias[indx]
-            guess_inputs.append(sign(get_output))
-
+            # multiply the weights and add the bias (bias is array of n elements)
+            get_output = (preceptron_summation*o_weight)+self.output_bias[indx]
+            get_output = round(get_output, 30)
+            activation = sigmoid(get_output)
+            # pass through activation function
+            guesses.append(activation)
 
         # get the error = known answer - guess
-        errors = [] #target - guess_inputs
-        for target, guess_input in zip(targets, guess_inputs):
-            errors.append(target - guess_input)
+        output_errors = []
+        for target, guess in zip(targets, guesses):
+            output_errors.append(target - guess)
 
         # adjust the output weights here
         for indx, o_weight in enumerate(self.output_weights):
-            # TODO: double check this later, done
-            delta_o_weight = errors[indx] * self.lr * preceptron_summation
+            output_gradient = dsigmoid(o_weight)
+            output_error = output_errors[indx]
+            delta_o_weight = self.lr * output_error * output_gradient * preceptron_summation
             self.output_weights[indx] = o_weight + delta_o_weight
+            self.output_bias[indx] += output_gradient
 
-        # adjust the input weights here
-        total_ers = 0
-        for error in errors:
-            total_ers+=error
-        for indx, i_weight in enumerate(self.input_weights):
-            delta_i_weight = self.lr * total_ers * i_weight
-            self.input_weights[indx] = weight + delta_i_weight
+        # ------ Adjust the input weights and biases here ------
+        # find the error
+        input_errors = [] # will only be one error because only one node
+        input_error_sum = 0
+        for indx, output_error in enumerate(output_errors):
+            input_error_sum += self.output_weights[indx]
+        input_errors.append(input_error_sum)
+        # find the gradient
+        input_gradient = self.lr * input_errors[0]
+
+        for indx, input_weight in enumerate(self.input_weights):
+            delta_i_weights = self.lr * input_errors[0] * input_gradient * inputs[indx]
+            self.input_weights[indx] += delta_i_weights
+
+        # adjsut the input biases
+        self.input_bias[0] += input_gradient
+
 
     '''
         runs train function over and over agian
@@ -134,7 +156,6 @@ class Improved_Preceptron():
         for x, y in zip(inputs_test_array, targets_test_array):
             # get the inputs
             prediction = self.feed_forward(x)
-            # print("pred:", prediction, "y:", y)
             if prediction == y:
                 average+=1
 
@@ -232,7 +253,31 @@ class Improved_Preceptron():
 
 
 def main():
-    pass
+    or_preceptron = Improved_Preceptron(2, 1)
+    #     input 1, input 2, bias
+    val0 = [0,0]
+    val1 = [0,1]
+    val2 = [1,0]
+    val3 = [1,1]
+    val_labels = [[0], [1], [1], [1]]
+    inputs = [val0, val1, val2, val3]
+
+    for _ in range(100):
+        rand_num = random.randrange(0, 4)
+        input = inputs[rand_num]
+        label = val_labels[rand_num]
+        or_preceptron.train(input, label)
+
+    print("x or y")
+    for i in inputs:
+        # return -1 or 1
+        pred = or_preceptron.feed_forward(i)
+        # print("pred", pred)
+        if pred == -1:
+            pred = 0
+        else:
+            pred = 1
+        print("{} | {} -> {}".format(i[0], i[1], pred))
 
 
 if __name__ =="__main__":

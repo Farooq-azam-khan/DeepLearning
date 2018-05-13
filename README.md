@@ -1,5 +1,5 @@
-# Deep Learning Library
-Here is the tutorial for Deep Learning. This repository requires `python 3 64-bit`.
+# Deep Learning and Machine Learning Library
+Here is the tutorial for Deep Learning and Machine Learning. This repository requires `python 3 64-bit`.
 
 ## 0. Setup
 Follow these instruction so that you can use this repository:
