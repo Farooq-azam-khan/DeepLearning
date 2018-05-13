@@ -133,6 +133,6 @@ def main():
         prediction = nn.feed_forward(input)
         print("{} | {} -> {:.2f}".format(input[0], input[1], prediction[0]))
 
-
+    # TODO: save neural network
 if __name__ == "__main__":
     main()
