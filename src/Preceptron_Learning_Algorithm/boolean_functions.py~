@@ -1,4 +1,4 @@
-smport random
+import random
 from preceptron import Preceptron
 
 def or_prediction():
